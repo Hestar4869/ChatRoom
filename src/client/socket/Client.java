@@ -9,8 +9,24 @@ import java.net.Socket;
  * @author: HMX
  * @date: 2022-05-19 18:39
  */
-public class Client
+public class Client implements Runnable
 {
+    //单例模式
+    private static Client client=new Client();
+    private static Socket socket;
+    //Socket的输入输出流
+    private static PrintStream ps;
+    private static BufferedReader br;
+    //判断当前客户端是否运行以及是否有新消息
+    public boolean isRun=true;
+    public boolean isRead=false;
+
+    private Client(){}
+
+    public static Client getInstance(){
+        return client;
+    }
+    //根据传入的账号密码，进行账号注册
     public static boolean registerRequest(String username,String passwd) throws Exception {
         Socket registerSocket = new Socket("127.0.0.1", 17779);
         //输入流
@@ -51,6 +67,10 @@ public class Client
         if (info.equals("succeed"))
         {
             System.out.println("登录成功");
+            Client.socket=loginSocket;
+            Client.ps=ps;
+            Client.br=br;
+            new Thread(getInstance()).start();
             return true;
         }
         else
@@ -62,6 +82,25 @@ public class Client
 
     public static void main(String[] args)
     {
+
+    }
+
+    @Override
+    public void run()
+    {
+        try
+        {
+            while(isRun){
+                String flag= br.readLine();
+                if(flag.equals("LOGOUT")){
+                    isRun=false;
+                }
+                else if(flag.equals("MESSAGE")){
+                    isRead=true;
+                }
+            }
+        }
+        catch (Exception exception){}
 
     }
 }

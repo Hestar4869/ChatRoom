@@ -96,6 +96,9 @@ public class LoginFrame extends JFrame implements ActionListener
                 //todo 用SocketClient.login()函数尝试登录
                 if (Client.loginRequest(username,passwd)) {
                     JOptionPane.showMessageDialog(this, "登录成功");
+                    new ChatFrame(username);
+
+                    this.dispose();
                 }
                 else {
                     JOptionPane.showMessageDialog(this, "登录失败，账号或密码错误");

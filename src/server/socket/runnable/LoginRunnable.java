@@ -5,6 +5,7 @@ import server.database.daoimpl.UserDAOImpl;
 import server.database.data.User;
 import server.socket.ChatServer;
 import server.socket.UserThread;
+import server.view.ServerFrame;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -51,6 +52,7 @@ public class LoginRunnable implements Runnable
                     //将该用户添加进入在线用户
                     cs.currentUsers.add(username);
                     cs.userThreadMap.put(username,new UserThread(username,socket));
+                    ServerFrame.lst.addElement(username);
                 }
                 else
                     ps.println("failed");

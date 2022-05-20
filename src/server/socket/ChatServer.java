@@ -19,7 +19,7 @@ public class ChatServer
 {
     private static ChatServer chatServer=new ChatServer();
     //保存目前在线的用户
-    public List<String> currentUsers =new LinkedList<>();
+    public List<String> currentUsers =new Vector<>();
 
     public Map<String,UserThread> userThreadMap=new HashMap<>();
 
