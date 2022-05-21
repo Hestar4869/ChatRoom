@@ -1,6 +1,7 @@
 package server.socket;
 
 import server.database.data.User;
+import server.socket.runnable.InitRunnable;
 import server.socket.runnable.LoginRunnable;
 import server.socket.runnable.RegisterRunnable;
 
@@ -29,8 +30,10 @@ public class ChatServer
     public void start(){
         try
         {
+            //开启登录、注册、初始化三种服务
             new Thread(new LoginRunnable()).start();
             new Thread(new RegisterRunnable()).start();
+            new Thread(new InitRunnable()).start();
         }
         catch (IOException e)
         {

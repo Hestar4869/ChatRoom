@@ -5,6 +5,9 @@ import server.database.data.Message;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * @className: Client
@@ -24,6 +27,12 @@ public class Client implements Runnable, MyConstant
     public boolean isRun=true;
     public boolean isRead=false;
 
+    //当前在线用户
+    public static List<String> currentUsers=new Vector<>();
+    //所属群组
+    public static List<String> groups=new Vector<>();
+    //所有聊天记录
+    public static Map<String,List<Message>> map;
     private Client(){
         new Thread(this).start();
     }
@@ -34,6 +43,7 @@ public class Client implements Runnable, MyConstant
     //将传入的消息类，发送给服务器，通过服务器发送给其他用户
     //type:"user" 或 "group"
     public static boolean sendMessage(Message msg,String msgType){
+        ps.println(TYPR_MESSAGE);
         ps.println(msgType);
         ps.println(msg.toString());
         System.out.println(msg.toString());
@@ -92,7 +102,43 @@ public class Client implements Runnable, MyConstant
             return false;
         }
     }
-
+    //根据传入的用户信息，向远端服务器请求所有初始化所需信息
+    public static boolean initRequest(String username) throws Exception{
+        Socket s=new Socket("127.0.0.1",17776);
+        BufferedReader br=new BufferedReader(new InputStreamReader(s.getInputStream()));
+        PrintStream ps=new PrintStream(s.getOutputStream());
+        ObjectInputStream oos=new ObjectInputStream(s.getInputStream());
+        ps.println(username);
+        int count= Integer.valueOf(br.readLine());
+        for(int i=1;i<=count;i++){
+            String user=br.readLine();
+            currentUsers.add(user);
+        }
+//        while (true)
+//        {
+//            Thread.sleep(1000);
+//            try
+//            {
+//                s.sendUrgentData(0xFF);
+//            }
+//            catch (Exception exception)
+//            {
+//                //先读入当前在线的用户
+//                currentUsers = (Vector<String>) oos.readObject();
+//                break;
+//                //再读入所属群组
+////        groups=(List<String>)oos.readObject();
+//                //再读入用户聊天记录和群组聊天记录
+////        map= (Map<String, List<Message>>) oos.readObject();
+//            }
+//
+//        }
+        for (String user : currentUsers)
+        {
+            System.out.println("当前在线的用户有："+user);
+        }
+        return true;
+    }
 
     //开启线程，等待登出信息或者其他用户的聊天消息
     @Override

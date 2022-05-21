@@ -1,6 +1,7 @@
 package client.view;
 
 import client.socket.Client;
+import com.formdev.flatlaf.FlatDarkLaf;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,8 +17,8 @@ import java.awt.event.ActionListener;
 public class LoginFrame extends JFrame implements ActionListener
 {
     private String username;
-    final int WIDTH = 300;
-    final int HEIGHT = 229;
+    final int WIDTH = 380;
+    final int HEIGHT = 254;
     private FlowLayout flowLayout = new FlowLayout(FlowLayout.CENTER, 20, 20);
 
     //登录界面的元素
@@ -38,6 +39,12 @@ public class LoginFrame extends JFrame implements ActionListener
     //构造登录页面
     public LoginFrame() throws HeadlessException
     {
+        //Flat Darcula
+        try {
+            UIManager.setLookAndFeel( new FlatDarkLaf() );
+        } catch( Exception ex ) {
+            System.err.println( "Failed to initialize LaF" );
+        }
         //给三个按钮添加事件
         loginButton.addActionListener(this);
         exitButton.addActionListener(this);
@@ -96,7 +103,7 @@ public class LoginFrame extends JFrame implements ActionListener
                 //todo 用SocketClient.login()函数尝试登录
                 if (Client.loginRequest(username,passwd)) {
                     JOptionPane.showMessageDialog(this, "登录成功");
-                    new ChatFrame(username);
+                    new ChatFrame("a");
 
                     this.dispose();
                 }
@@ -124,6 +131,12 @@ public class LoginFrame extends JFrame implements ActionListener
 
     public static void main(String[] args)
     {
+        //Flat Darcula
+        try {
+            UIManager.setLookAndFeel( new FlatDarkLaf() );
+        } catch( Exception ex ) {
+            System.err.println( "Failed to initialize LaF" );
+        }
         LoginFrame loginFrame = new LoginFrame();
 //        new Thread(new Runnable()
 //        {

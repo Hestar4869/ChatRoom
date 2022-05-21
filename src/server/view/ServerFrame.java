@@ -86,6 +86,7 @@ public class ServerFrame extends JFrame implements ActionListener, ListDataListe
                 System.out.println("被选中的用户有"+username);
                 UserThread ut = cs.userThreadMap.get(username);
                 lst.removeElement(username);
+                cs.userThreadMap.remove(username);
                 ut.logout();
             }
         }

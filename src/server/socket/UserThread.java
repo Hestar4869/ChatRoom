@@ -54,21 +54,37 @@ public class UserThread extends Thread implements MyConstant
             super.run();
             while (isRun)
             {
-                String msgType = br.readLine(),msgLine= br.readLine();
-                Message msg=new Message(msgLine);
-                switch (msgType){
-                    case MSGTYPE_USER:
-                        UserThread ut=cs.userThreadMap.get(msg.getDstName());
-                        ut.sendMessage(msgLine);
-
-                        //将聊天记录存入数据库
-
+                String type=br.readLine();
+                switch (type){
+                    case TYPE_LOGOUT:
+                        isRun=false;
+                        //去除当前在线用户
+                        cs.currentUsers.remove(username);
+                        //去除用户：线程映射
+                        cs.userThreadMap.remove(username);
                         break;
-                    case MSGTYPE_GROUP:
-                        break;
+                    case TYPR_MESSAGE:
+                        String msgType = br.readLine(),msgLine= br.readLine();
+                        Message msg=new Message(msgLine);
+                        switch (msgType)
+                        {
+                            case MSGTYPE_USER:
+                                UserThread ut = cs.userThreadMap.get(msg.getDstName());
+                                ut.sendMessage(msgLine);
+
+                                //将聊天记录存入数据库
+
+                                break;
+                            case MSGTYPE_GROUP:
+                                break;
+
+                        }
+                    break;
                 }
             }
         }
-        catch (Exception exception){}
+        catch (Exception exception){
+
+        }
     }
 }

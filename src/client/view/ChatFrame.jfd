@@ -1,0 +1,104 @@
+JFDML JFormDesigner: "7.0.5.1.409" Java: "11.0.10" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			"defaultCloseOperation": 3
+			"$locationPolicy": 1
+			"visible": true
+			"minimumSize": new java.awt.Dimension( 585, 450 )
+			"font": new java.awt.Font( "Dialog", 2, 12 )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"font": new com.jformdesigner.model.SwingDerivedFont( "JetBrains Mono", 3, 12, false )
+				"horizontalAlignment": 0
+				"background": &SwingColor0 new com.jformdesigner.model.SwingColor( "Button.background" )
+				"text": "欢迎来到聊天界面"
+				"foreground": #SwingColor0
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "North"
+			} )
+			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
+				name: "westPanel"
+				"selectedIndex": 1
+				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+					name: "userTab"
+					"preferredSize": new java.awt.Dimension( 100, 164 )
+					add( new FormComponent( "javax.swing.JList" ) {
+						name: "userList"
+					} )
+				}, new FormLayoutConstraints( null ) {
+					"title": "用户"
+				} )
+				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+					name: "groupTab"
+					add( new FormComponent( "javax.swing.JList" ) {
+						name: "groupList"
+						"model": new javax.swing.DefaultListModel {
+							addElement( "fsdk" )
+							addElement( "fsafsfsf" )
+							addElement( "fsgsdd" )
+						}
+					} )
+				}, new FormLayoutConstraints( null ) {
+					"title": "群组"
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "West"
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
+				"axis": 1
+			} ) {
+				name: "centerPanel"
+				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+					name: "scrollPane1"
+					add( new FormComponent( "javax.swing.JList" ) {
+						name: "msgList"
+						"foreground": #SwingColor0
+					} )
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
+				"axis": 1
+			} ) {
+				name: "eastPanel"
+				"alignmentX": 0.0f
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "button1"
+					"text": "text"
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "button2"
+					"text": "text"
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "button3"
+					"text": "text"
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "East"
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) ) {
+				name: "panel1"
+				add( new FormComponent( "javax.swing.JTextField" ) {
+					name: "deleverText"
+					"minimumSize": new java.awt.Dimension( 80, 30 )
+					"preferredSize": new java.awt.Dimension( 250, 30 )
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "deliverBtn"
+					"text": "发送"
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "South"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 605, 450 )
+		} )
+	}
+}
