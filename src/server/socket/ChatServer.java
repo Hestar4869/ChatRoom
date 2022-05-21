@@ -43,6 +43,8 @@ public class ChatServer
         }
         return chatServer;
     }
-
+    public static boolean sendMessage(String msg,String msgType){
+        return true;
+    }
 
 }

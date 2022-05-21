@@ -13,13 +13,21 @@ public class Message
     private String dstName;
     private String content;
 
+    @Override
+    public String toString()
+    {
+        return srcName+"~"+dstName+"~"+content;
+    }
+
     public Message(String srcName, String dstName, String content)
     {
         this.srcName = srcName;
         this.dstName = dstName;
         this.content = content;
     }
-
+    public Message(String line){
+        this(line.split("~")[0],line.split("~")[1], line.split("~")[2]);
+    }
     public int getId()
     {
         return id;

@@ -1,6 +1,8 @@
 package client.view;
 
 import client.socket.Client;
+import constant.MyConstant;
+import server.database.data.Message;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,8 +15,9 @@ import java.awt.event.ActionListener;
  * @author: HMX
  * @date: 2022-05-19 21:17
  */
-public class ChatFrame extends JFrame implements ActionListener
+public class ChatFrame extends JFrame implements ActionListener,MyConstant
 {
+    private JButton testBtn=new JButton();
     private final int WIDTH=500;
     private final int HEIGHT=300;
     Client client=Client.getInstance();
@@ -26,7 +29,8 @@ public class ChatFrame extends JFrame implements ActionListener
 
     public ChatFrame(String username) throws HeadlessException
     {
-
+        testBtn.addActionListener(this);
+        this.add(testBtn);
         this.username=username;
         //Dimension封装了电脑屏幕的宽度和高度
         //获取屏幕宽度和高度，使窗口位于屏幕正中间
@@ -46,7 +50,6 @@ public class ChatFrame extends JFrame implements ActionListener
     {
         if(e.getSource()==timer){
             //每隔0.1s轮询，检查新消息和登出
-            System.out.println("timer:"+"轮询开始");
             //先检查消息
             if(client.isRead){
                 //有新消息需要读取
@@ -58,11 +61,11 @@ public class ChatFrame extends JFrame implements ActionListener
                 System.exit(0);
             }
         }
+        else if(e.getSource()==testBtn){
+            Client.sendMessage(new Message("a","b","hello b. This is a."),MyConstant.MSGTYPE_USER);
+            System.out.println("已发送消息");
+        }
 
     }
 
-    public static void main(String[] args)
-    {
-        new ChatFrame("a");
-    }
 }

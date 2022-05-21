@@ -1,5 +1,8 @@
 package client.socket;
 
+import constant.MyConstant;
+import server.database.data.Message;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -9,7 +12,7 @@ import java.net.Socket;
  * @author: HMX
  * @date: 2022-05-19 18:39
  */
-public class Client implements Runnable
+public class Client implements Runnable, MyConstant
 {
     //单例模式
     private static Client client=new Client();
@@ -21,10 +24,20 @@ public class Client implements Runnable
     public boolean isRun=true;
     public boolean isRead=false;
 
-    private Client(){}
-
+    private Client(){
+        new Thread(this).start();
+    }
     public static Client getInstance(){
         return client;
+    }
+
+    //将传入的消息类，发送给服务器，通过服务器发送给其他用户
+    //type:"user" 或 "group"
+    public static boolean sendMessage(Message msg,String msgType){
+        ps.println(msgType);
+        ps.println(msg.toString());
+        System.out.println(msg.toString());
+        return true;
     }
     //根据传入的账号密码，进行账号注册
     public static boolean registerRequest(String username,String passwd) throws Exception {
@@ -80,11 +93,8 @@ public class Client implements Runnable
         }
     }
 
-    public static void main(String[] args)
-    {
 
-    }
-
+    //开启线程，等待登出信息或者其他用户的聊天消息
     @Override
     public void run()
     {
@@ -92,11 +102,24 @@ public class Client implements Runnable
         {
             while(isRun){
                 String flag= br.readLine();
-                if(flag.equals("LOGOUT")){
+                System.out.println("收到flag "+flag);
+
+                if(flag.equals(TYPE_LOGOUT)){
                     isRun=false;
                 }
-                else if(flag.equals("MESSAGE")){
+                else if(flag.equals(TYPR_MESSAGE)){
                     isRead=true;
+                    String msgType= br.readLine();
+                    switch (msgType){
+                        case MSGTYPE_GROUP:
+                            //添加到群聊消息
+
+                            break;
+                        case MSGTYPE_USER:
+                            //添加到用户消息
+                            System.out.println("收到消息"+br.readLine());
+                            break;
+                    }
                 }
             }
         }

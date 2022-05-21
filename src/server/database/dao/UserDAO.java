@@ -18,5 +18,5 @@ public interface UserDAO
 
     //插入
     public void insert(User user) throws Exception;
-    public void insertRelationship(String srcId,String dstId) throws Exception;
+    public void insertRelationship(String srcName,String dstName) throws Exception;
 }
