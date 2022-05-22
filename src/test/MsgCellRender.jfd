@@ -1,0 +1,43 @@
+JFDML JFormDesigner: "7.0.5.1.409" Java: "11.0.10" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.swingx.VerticalLayout ) ) {
+			name: "this"
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
+				"axis": 1
+			} ) {
+				name: "panel1"
+				"alignmentX": 0.0f
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "userLabel"
+					"text": "user say:"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label1"
+					"text": "        你好发送卡发撒金卡"
+				} )
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
+				"axis": 1
+			} ) {
+				name: "panel2"
+				"alignmentX": 0.0f
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "userLabel2"
+					"text": "user say:"
+					"alignmentX": 1.0f
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "label2"
+					"text": "你好发送卡发撒金卡        "
+					"alignmentX": 1.0f
+				} )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 20, 45 )
+			"size": new java.awt.Dimension( 360, 145 )
+		} )
+	}
+}

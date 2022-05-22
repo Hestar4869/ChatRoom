@@ -11,7 +11,7 @@ import java.net.Socket;
 
 /**
  * @className: RegisterRunnable
- * @description: TODO 类描述
+ * @description: 显示 注册功能 的线程
  * @author: HMX
  * @date: 2022-05-19 18:42
  */

@@ -1,5 +1,6 @@
 package client.socket;
 
+import client.view.ChatFrame;
 import constant.MyConstant;
 import server.database.data.Message;
 
@@ -17,6 +18,7 @@ import java.util.Vector;
  */
 public class Client implements Runnable, MyConstant
 {
+    public static ChatFrame chatFrame;
     //单例模式
     private static Client client=new Client();
     private static Socket socket;
@@ -43,6 +45,7 @@ public class Client implements Runnable, MyConstant
     //将传入的消息类，发送给服务器，通过服务器发送给其他用户
     //type:"user" 或 "group"
     public static boolean sendMessage(Message msg,String msgType){
+        chatFrame.msgListModel.addElement(msg);
         ps.println(TYPR_MESSAGE);
         ps.println(msgType);
         ps.println(msg.toString());
@@ -112,6 +115,8 @@ public class Client implements Runnable, MyConstant
         int count= Integer.valueOf(br.readLine());
         for(int i=1;i<=count;i++){
             String user=br.readLine();
+            if(user.equals(username))
+                continue;
             currentUsers.add(user);
         }
 //        while (true)
@@ -163,7 +168,9 @@ public class Client implements Runnable, MyConstant
                             break;
                         case MSGTYPE_USER:
                             //添加到用户消息
-                            System.out.println("收到消息"+br.readLine());
+                            String msgLine= br.readLine();
+                            Message msg=new Message(msgLine);
+                            chatFrame.msgListModel.addElement(msg);
                             break;
                     }
                 }

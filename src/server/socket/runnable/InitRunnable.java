@@ -45,6 +45,10 @@ public class InitRunnable implements Runnable
                 {
                     ps.println(user);
                 }
+                //传送该用户所属群组
+
+                //传送历史聊天记录
+
                 System.out.println("收到来自"+br.readLine()+"的请求");
                 socket.shutdownInput();
                 socket.shutdownOutput();

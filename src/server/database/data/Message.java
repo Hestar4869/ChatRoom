@@ -28,6 +28,7 @@ public class Message
     public Message(String line){
         this(line.split("~")[0],line.split("~")[1], line.split("~")[2]);
     }
+
     public int getId()
     {
         return id;
