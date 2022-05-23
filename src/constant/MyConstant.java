@@ -11,6 +11,8 @@ public interface MyConstant
     //socket中传送的数据类型
     public final String TYPE_LOGOUT="LOGOUT";
     public final String TYPR_MESSAGE="MESSAGE";
+    public final String TYPE_USERLOGIN="USERLOGIN";
+    public final String TYPE_USERLOGOUT ="USERLOGOUT";
 
     //聊天记录的类型
     public final String MSGTYPE_USER="user";

@@ -1,5 +1,7 @@
 package server.view;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import server.database.data.Message;
 import server.socket.ChatServer;
 import server.socket.UserThread;
 
@@ -32,6 +34,7 @@ public class ServerFrame extends JFrame implements ActionListener, ListDataListe
     JPanel btnPanel=new JPanel();
     JButton logoutBtn=new JButton("Logout");
     JButton msgBtn=new JButton("send Message");
+    JTextField msgText=new JTextField();
     //更新轮询器
     Timer timer=new Timer(1000,this);
 
@@ -50,7 +53,7 @@ public class ServerFrame extends JFrame implements ActionListener, ListDataListe
         btnPanel.add(new JLabel(" "));
         btnPanel.add(msgBtn);
         btnPanel.add(Box.createVerticalGlue());
-
+        btnPanel.add(msgText);
 
         //Dimension封装了电脑屏幕的宽度和高度
         //获取屏幕宽度和高度，使窗口位于屏幕正中间
@@ -86,16 +89,31 @@ public class ServerFrame extends JFrame implements ActionListener, ListDataListe
                 System.out.println("被选中的用户有"+username);
                 UserThread ut = cs.userThreadMap.get(username);
                 lst.removeElement(username);
+                cs.currentUsers.remove(username);
                 cs.userThreadMap.remove(username);
                 ut.logout();
             }
         }
-        else if(e.getSource()==msgBtn){
+        else if(e.getSource()==msgBtn || e.getSource()==msgText){
             //todo send System message to those users who are selected in the JList
+            java.util.List<String> selectedUser= jList.getSelectedValuesList();
+
+            for (String username:selectedUser){
+                Message msg=new Message("系统消息",username,msgText.getText());
+                UserThread ut=cs.userThreadMap.get(username);
+                ut.sendMessage(msg.toString());
+            }
+            msgText.setText("");
         }
     }
     public static void main(String[] args)
     {
+        //Flat Darcula
+        try {
+            UIManager.setLookAndFeel( new FlatDarkLaf() );
+        } catch( Exception ex ) {
+            System.err.println( "Failed to initialize LaF" );
+        }
         new ServerFrame();
     }
 

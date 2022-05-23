@@ -4,6 +4,7 @@ import client.view.ChatFrame;
 import constant.MyConstant;
 import server.database.data.Message;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
@@ -45,7 +46,6 @@ public class Client implements Runnable, MyConstant
     //将传入的消息类，发送给服务器，通过服务器发送给其他用户
     //type:"user" 或 "group"
     public static boolean sendMessage(Message msg,String msgType){
-        chatFrame.msgListModel.addElement(msg);
         ps.println(TYPR_MESSAGE);
         ps.println(msgType);
         ps.println(msg.toString());
@@ -118,6 +118,8 @@ public class Client implements Runnable, MyConstant
             if(user.equals(username))
                 continue;
             currentUsers.add(user);
+            chatFrame.userListModel.addElement(user);
+            chatFrame.msgListModelMap.put(user, new DefaultListModel<>());
         }
 //        while (true)
 //        {
@@ -144,7 +146,12 @@ public class Client implements Runnable, MyConstant
         }
         return true;
     }
-
+    //根据传入的用户信息，向远端服务器传送下线请求
+    public static boolean logoutRequest(String username) throws Exception{
+        ps.println(TYPE_USERLOGOUT);
+        ps.println(username);
+        return true;
+    }
     //开启线程，等待登出信息或者其他用户的聊天消息
     @Override
     public void run()
@@ -170,9 +177,22 @@ public class Client implements Runnable, MyConstant
                             //添加到用户消息
                             String msgLine= br.readLine();
                             Message msg=new Message(msgLine);
-                            chatFrame.msgListModel.addElement(msg);
+                            DefaultListModel<Message> msgListModel= chatFrame.msgListModelMap.get(msg.getSrcName());
+                            msgListModel.addElement(msg);
+//                            chatFrame.msgListModel.addElement(msg);
                             break;
                     }
+                }
+                else if(flag.equals(TYPE_USERLOGIN)){
+                    //有新用户登录
+                    String newUser=br.readLine();
+                    chatFrame.userListModel.addElement(newUser);
+                    chatFrame.msgListModelMap.put(newUser, new DefaultListModel<>());
+                }
+                else if(flag.equals(TYPE_USERLOGOUT)){
+                    String newUser= br.readLine();
+                    chatFrame.userListModel.removeElement(newUser);
+                    chatFrame.msgListModelMap.remove(newUser);
                 }
             }
         }

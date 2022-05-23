@@ -50,6 +50,10 @@ public class LoginRunnable implements Runnable
                 {
                     ps.println("succeed");
                     //将该用户添加进入在线用户
+                    for (String user:cs.currentUsers){
+                        UserThread ut=cs.userThreadMap.get(user);
+                        ut.sendNewUserLogin(username);
+                    }
                     cs.currentUsers.add(username);
                     cs.userThreadMap.put(username,new UserThread(username,socket));
                     ServerFrame.lst.addElement(username);

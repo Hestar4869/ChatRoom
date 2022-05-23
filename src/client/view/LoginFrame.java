@@ -104,7 +104,7 @@ public class LoginFrame extends JFrame implements ActionListener
                 if (Client.loginRequest(username,passwd)) {
                     JOptionPane.showMessageDialog(this, "登录成功");
                     Client.chatFrame=new ChatFrame(username);
-
+                    Client.chatFrame.initHistory();
                     this.dispose();
                 }
                 else {

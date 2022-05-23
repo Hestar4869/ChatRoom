@@ -4,6 +4,8 @@
 
 package client.view;
 
+import java.awt.event.*;
+import javax.swing.event.*;
 import client.socket.Client;
 import constant.MyConstant;
 import server.database.data.Message;
@@ -12,10 +14,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * @author MuQuanyu
- */
+
 public class ChatFrame extends JFrame implements ActionListener, MyConstant
 {
     //轮询器
@@ -24,9 +26,13 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
     //当前登录的用户
     private String username;
 
-    //消息List的相关UI
+    //消息List列表框的相关UI
     public MessageCellRender msgCellRender;
     public DefaultListModel<Message> msgListModel;
+    public Map<String,DefaultListModel<Message>> msgListModelMap=new HashMap<>();
+
+    //用户列表框相关UI
+    public DefaultListModel<String> userListModel;
 
     public ChatFrame(String username) throws Exception
     {
@@ -36,19 +42,26 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
         //初始化组件
         initComponents();
         deliverBtn.addActionListener(this::actionPerformed);
+        deleverText.addActionListener(this::actionPerformed);
 
         //初始化消息框UI
         msgCellRender = new MessageCellRender(username);
         msgListModel = new DefaultListModel<>();
         msgList.setCellRenderer(msgCellRender);
         msgList.setModel(msgListModel);
+
+        //初始化用户列表框UI
+        userListModel=new DefaultListModel<>();
+        userList.setModel(userListModel);
+        userListModel.addElement("系统消息");
+        msgListModelMap.put("系统消息",new DefaultListModel<>());
         //初始化历史记录
-        initHistory();
-        //
+//        initHistory();
+
         label1.setText(label1.getText() + username);
     }
 
-    private void initHistory() throws Exception
+    public void initHistory() throws Exception
     {
         //获取当前在线用户并初始化历史聊天记录
         Client.initRequest(username);
@@ -56,22 +69,6 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
         //如果不为空，则加入到用户列表
         if (!Client.currentUsers.isEmpty())
         {
-            //初始化用户列表
-            userList.setModel(new AbstractListModel<String>()
-            {
-                @Override
-                public int getSize()
-                {
-                    return Client.currentUsers.size();
-                }
-
-                @Override
-                public String getElementAt(int index)
-                {
-                    return Client.currentUsers.get(index);
-                }
-            });
-
 
         }
     }
@@ -79,6 +76,35 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
     private void deliverBtn(ActionEvent e)
     {
         // TODO add your code here
+    }
+
+    //userList列表框绑定事件
+    private void userListValueChanged(ListSelectionEvent e) {
+        //当鼠标按下时
+        if(e.getValueIsAdjusting()){
+            java.util.List<String> users=userList.getSelectedValuesList();
+            //数量大于1,直接跳过
+            if (users.size()>1)
+                return;
+
+            //切换ListModel
+            String user=users.get(0);
+            System.out.println("被点击了,开始切换");
+            msgList.setModel(msgListModelMap.get(user));
+        }
+    }
+
+    private void thisWindowClosing(WindowEvent e) {
+        // 窗口关闭
+        System.out.println("窗口关闭了");
+        //向远端服务器传送用户下线的消息
+        try
+        {
+            Client.logoutRequest(username);
+        }
+        catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
 
 
@@ -108,11 +134,17 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
         setVisible(true);
         setMinimumSize(new Dimension(585, 450));
         setFont(new Font(Font.DIALOG, Font.ITALIC, 12));
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                thisWindowClosing(e);
+            }
+        });
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
 
         //---- label1 ----
-        label1.setFont(new Font("JetBrains Mono", Font.BOLD | Font.ITALIC, label1.getFont().getSize() + 12));
+        label1.setFont(new Font("JetBrains Mono", Font.BOLD|Font.ITALIC, label1.getFont().getSize() + 12));
         label1.setHorizontalAlignment(SwingConstants.CENTER);
         label1.setBackground(UIManager.getColor("Button.background"));
         label1.setText("\u6b22\u8fce\u6765\u5230\u804a\u5929\u754c\u9762");
@@ -125,6 +157,9 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
             //======== userTab ========
             {
                 userTab.setPreferredSize(new Dimension(100, 164));
+
+                //---- userList ----
+                userList.addListSelectionListener(e -> userListValueChanged(e));
                 userTab.setViewportView(userList);
             }
             westPanel.addTab("\u7528\u6237", userTab);
@@ -133,23 +168,16 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
             {
 
                 //---- groupList ----
-                groupList.setModel(new AbstractListModel<String>()
-                {
+                groupList.setModel(new AbstractListModel<String>() {
                     String[] values = {
-                            "fsdk", "fsafsfsf", "fsgsdd"
+                        "fsdk",
+                        "fsafsfsf",
+                        "fsgsdd"
                     };
-
                     @Override
-                    public int getSize()
-                    {
-                        return values.length;
-                    }
-
+                    public int getSize() { return values.length; }
                     @Override
-                    public String getElementAt(int i)
-                    {
-                        return values[i];
-                    }
+                    public String getElementAt(int i) { return values[i]; }
                 });
                 groupTab.setViewportView(groupList);
             }
@@ -234,7 +262,6 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
     private JPanel panel1;
     private JTextField deleverText;
     private JButton deliverBtn;
-
     // JFormDesigner - End of variables declaration  //GEN-END:variables
     @Override
     public void actionPerformed(ActionEvent e)
@@ -255,36 +282,19 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
                 System.exit(0);
             }
         }
-        else if (e.getSource() == deliverBtn)
+        else if (e.getSource() == deliverBtn || e.getSource()==deleverText)
         {
             java.util.List<String> selectedUser = userList.getSelectedValuesList();
             for (String user : selectedUser)
             {
-                Client.sendMessage(new Message(username, user, deleverText.getText()), MyConstant.MSGTYPE_USER);
-                deleverText.setText("");
+                Message msg=new Message(username, user, deleverText.getText());
+                Client.sendMessage(msg, MyConstant.MSGTYPE_USER);
+                DefaultListModel<Message> lm=msgListModelMap.get(user);
+                lm.addElement(msg);
             }
-
+            deleverText.setText("");
             System.out.println("已发送消息");
         }
     }
 
-    /**
-     * @description:
-     * @param:
-     * @return: boolean
-     * @author: HMX
-     * @date: 2022-5-21 15:20
-     */
-    private boolean checkSelectedItem(String type)
-    {
-        switch (type)
-        {
-            case MSGTYPE_USER:
-
-                break;
-            case MSGTYPE_GROUP:
-
-        }
-        return true;
-    }
 }

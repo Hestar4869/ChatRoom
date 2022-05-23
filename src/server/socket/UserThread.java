@@ -4,6 +4,7 @@ import constant.MyConstant;
 import server.database.dao.MsgDAO;
 import server.database.daoimpl.MsgDAOImpl;
 import server.database.data.Message;
+import server.view.ServerFrame;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -49,6 +50,15 @@ public class UserThread extends Thread implements MyConstant
         ps.println(msgLine);
         System.out.println("服务器将消息"+msgLine+"转发给"+username);
     }
+
+    public void sendNewUserLogin(String newUser){
+        ps.println(TYPE_USERLOGIN);
+        ps.println(newUser);
+    }
+    public void sendNewUserLogout(String newUser){
+        ps.println(TYPE_USERLOGOUT);
+        ps.println(newUser);
+    }
     @Override
     public void run()
     {
@@ -59,12 +69,19 @@ public class UserThread extends Thread implements MyConstant
                 String type=br.readLine();
                 switch (type){
                     //收到来自客户端的登出请求
-                    case TYPE_LOGOUT:
+                    case TYPE_USERLOGOUT:
                         isRun=false;
                         //去除当前在线用户
+                        String logoutUser=br.readLine();
                         cs.currentUsers.remove(username);
+                        ServerFrame.lst.removeElement(username);
                         //去除 用户:线程 映射
                         cs.userThreadMap.remove(username);
+                        //向其他客户端发送该用户登出的信息
+                        for (String user:cs.currentUsers){
+                            UserThread ut=cs.userThreadMap.get(user);
+                            ut.sendNewUserLogout(logoutUser);
+                        }
                         break;
 
                     //收到来自客户端发送给另一用户的消息 的请求
@@ -84,6 +101,7 @@ public class UserThread extends Thread implements MyConstant
                                 break;
                             case MSGTYPE_GROUP:
                                 break;
+
 
                         }
                     break;
