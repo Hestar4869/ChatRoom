@@ -111,35 +111,31 @@ public class Client implements Runnable, MyConstant
         BufferedReader br=new BufferedReader(new InputStreamReader(s.getInputStream()));
         PrintStream ps=new PrintStream(s.getOutputStream());
         ObjectInputStream oos=new ObjectInputStream(s.getInputStream());
+
+        //传送客户端用户名
         ps.println(username);
-        int count= Integer.valueOf(br.readLine());
+        //读取在线用户数
+        int count= Integer.parseInt(br.readLine());
         for(int i=1;i<=count;i++){
             String user=br.readLine();
+            //如果在线用户与该客户端用户相同，及不添加入用户列表，也不创建消息列表
             if(user.equals(username))
                 continue;
             currentUsers.add(user);
             chatFrame.userListModel.addElement(user);
-            chatFrame.msgListModelMap.put(user, new DefaultListModel<>());
+            DefaultListModel dlm=new DefaultListModel();
+            chatFrame.msgListModelMap.put(user, dlm);
+
+            //读取消息数
+            int msgCount= Integer.parseInt(br.readLine());
+            for (int j = 0; j < msgCount; j++)
+            {
+                Message msg=new Message(br.readLine());
+                //添加进入对应的消息列表
+                dlm.addElement(msg);
+            }
         }
-//        while (true)
-//        {
-//            Thread.sleep(1000);
-//            try
-//            {
-//                s.sendUrgentData(0xFF);
-//            }
-//            catch (Exception exception)
-//            {
-//                //先读入当前在线的用户
-//                currentUsers = (Vector<String>) oos.readObject();
-//                break;
-//                //再读入所属群组
-////        groups=(List<String>)oos.readObject();
-//                //再读入用户聊天记录和群组聊天记录
-////        map= (Map<String, List<Message>>) oos.readObject();
-//            }
-//
-//        }
+
         for (String user : currentUsers)
         {
             System.out.println("当前在线的用户有："+user);
@@ -179,7 +175,7 @@ public class Client implements Runnable, MyConstant
                             Message msg=new Message(msgLine);
                             DefaultListModel<Message> msgListModel= chatFrame.msgListModelMap.get(msg.getSrcName());
                             msgListModel.addElement(msg);
-//                            chatFrame.msgListModel.addElement(msg);
+
                             break;
                     }
                 }
@@ -187,7 +183,16 @@ public class Client implements Runnable, MyConstant
                     //有新用户登录
                     String newUser=br.readLine();
                     chatFrame.userListModel.addElement(newUser);
-                    chatFrame.msgListModelMap.put(newUser, new DefaultListModel<>());
+                    DefaultListModel dlm=new DefaultListModel();
+                    chatFrame.msgListModelMap.put(newUser, dlm);
+                    //读取消息数
+                    int msgCount= Integer.parseInt(br.readLine());
+                    for (int j = 0; j < msgCount; j++)
+                    {
+                        Message msg=new Message(br.readLine());
+                        //添加进入对应的消息列表
+                        dlm.addElement(msg);
+                    }
                 }
                 else if(flag.equals(TYPE_USERLOGOUT)){
                     String newUser= br.readLine();
