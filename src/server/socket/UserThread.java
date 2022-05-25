@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.List;
 
 /**
  * @className: UserThread
@@ -39,8 +40,15 @@ public class UserThread extends Thread implements MyConstant
     }
 
     public void logout(){
+        //告诉本线程对应的客户端下线
         ps.println(TYPE_LOGOUT);
         isRun=false;
+
+        //通知其他线程，有新用户下线
+        for (String user: cs.currentUsers){
+            UserThread ut=cs.userThreadMap.get(user);
+            ut.sendNewUserLogout(username);
+        }
     }
     public void sendMessage(String msgLine){
 
@@ -51,9 +59,19 @@ public class UserThread extends Thread implements MyConstant
         System.out.println("服务器将消息"+msgLine+"转发给"+username);
     }
 
-    public void sendNewUserLogin(String newUser){
+    public void sendNewUserLogin(String newUser) throws Exception
+    {
         ps.println(TYPE_USERLOGIN);
         ps.println(newUser);
+        //传送新用户的聊天记录
+        MsgDAO msgDAO=new MsgDAOImpl();
+        //传送两人之间的聊天记录
+        List<Message> msgs=msgDAO.findByTwoUsername(username,newUser);
+        //传送聊天记录的条数
+        ps.println(msgs.size());
+        //传送聊天记录具体内容
+        for (Message msg:msgs)
+            ps.println(msg.toString());
     }
     public void sendNewUserLogout(String newUser){
         ps.println(TYPE_USERLOGOUT);
