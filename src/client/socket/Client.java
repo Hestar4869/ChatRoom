@@ -144,8 +144,18 @@ public class Client implements Runnable, MyConstant
     }
     //根据传入的用户信息，向远端服务器传送下线请求
     public static boolean logoutRequest(String username) throws Exception{
-        ps.println(TYPE_USERLOGOUT);
+        ps.println(TYPE_USER_LOGOUT);
         ps.println(username);
+        return true;
+    }
+    //根据传入的用户Link，向远端服务器请求建立群组
+    public static boolean createGroupRequest(List<String> users,String groupName){
+        ps.println(TYPE_GROUP_CREATE);
+        ps.println(users.size());
+        for (String user :users)
+            ps.println(user);
+        ps.println(groupName);
+
         return true;
     }
     //开启线程，等待登出信息或者其他用户的聊天消息
@@ -179,7 +189,7 @@ public class Client implements Runnable, MyConstant
                             break;
                     }
                 }
-                else if(flag.equals(TYPE_USERLOGIN)){
+                else if(flag.equals(TYPE_USER_LOGIN)){
                     //有新用户登录
                     String newUser=br.readLine();
                     chatFrame.userListModel.addElement(newUser);
@@ -194,10 +204,15 @@ public class Client implements Runnable, MyConstant
                         dlm.addElement(msg);
                     }
                 }
-                else if(flag.equals(TYPE_USERLOGOUT)){
+                else if(flag.equals(TYPE_USER_LOGOUT)){
                     String newUser= br.readLine();
                     chatFrame.userListModel.removeElement(newUser);
                     chatFrame.msgListModelMap.remove(newUser);
+                }
+                else if(flag.equals(TYPE_GROUP_CREATE)){
+                    String groupName= br.readLine();
+                    chatFrame.groupListModel.addElement(groupName);
+                    JOptionPane.showMessageDialog(chatFrame,"您已被拉入新群聊"+groupName);
                 }
             }
         }

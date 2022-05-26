@@ -47,6 +47,21 @@ public class MsgDAOImpl extends BaseDAO implements MsgDAO
     }
 
     @Override
+    public List<Message> findByGroupName(String groupName) throws Exception
+    {
+        String sql=String.format("SELECT * FROM message where  dst_name='%s' ORDER by id ASC",groupName);
+        ResultSet rs=statement.executeQuery(sql);
+        List<Message> messages=new Vector<>();
+        while (rs.next()){
+            String srcName=rs.getString("src_name"),
+                    dstName=rs.getString("dst_name"),
+                    content=rs.getString("content");
+            messages.add(new Message(srcName,dstName,content));
+        }
+        return messages;
+    }
+
+    @Override
     public void insert(Message msg) throws Exception
     {
         String sql=String.format("insert into message (src_name,dst_name,content) values ('%s','%s','%s')",

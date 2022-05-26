@@ -33,7 +33,7 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
 
     //用户列表框相关UI
     public DefaultListModel<String> userListModel;
-
+    public DefaultListModel<String> groupListModel;
     public ChatFrame(String username) throws Exception
     {
         this.username = username;
@@ -43,6 +43,7 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
         initComponents();
         deliverBtn.addActionListener(this::actionPerformed);
         deleverText.addActionListener(this::actionPerformed);
+        createGroupBtn.addActionListener(this::actionPerformed);
 
         //初始化消息框UI
         msgCellRender = new MessageCellRender(username);
@@ -55,6 +56,11 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
         userList.setModel(userListModel);
         userListModel.addElement("系统消息");
         msgListModelMap.put("系统消息",new DefaultListModel<>());
+
+        //初始化群组列表框UI
+        groupListModel=new DefaultListModel<>();
+        groupList.setModel(groupListModel);
+
         //初始化历史记录
 //        initHistory();
 
@@ -122,9 +128,11 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
         scrollPane1 = new JScrollPane();
         msgList = new JList();
         eastPanel = new JPanel();
-        button1 = new JButton();
+        vSpacer1 = new JPanel(null);
+        createGroupBtn = new JButton();
         button2 = new JButton();
         button3 = new JButton();
+        vSpacer2 = new JPanel(null);
         panel1 = new JPanel();
         deleverText = new JTextField();
         deliverBtn = new JButton();
@@ -193,10 +201,11 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
         {
             eastPanel.setAlignmentX(0.0F);
             eastPanel.setLayout(new BoxLayout(eastPanel, BoxLayout.Y_AXIS));
+            eastPanel.add(vSpacer1);
 
-            //---- button1 ----
-            button1.setText("text");
-            eastPanel.add(button1);
+            //---- createGroupBtn ----
+            createGroupBtn.setText("\u521b\u5efa\u7fa4\u804a");
+            eastPanel.add(createGroupBtn);
 
             //---- button2 ----
             button2.setText("text");
@@ -205,6 +214,7 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
             //---- button3 ----
             button3.setText("text");
             eastPanel.add(button3);
+            eastPanel.add(vSpacer2);
         }
         contentPane.add(eastPanel, BorderLayout.EAST);
 
@@ -243,9 +253,11 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
     private JScrollPane scrollPane1;
     private JList msgList;
     private JPanel eastPanel;
-    private JButton button1;
+    private JPanel vSpacer1;
+    private JButton createGroupBtn;
     private JButton button2;
     private JButton button3;
+    private JPanel vSpacer2;
     private JPanel panel1;
     private JTextField deleverText;
     private JButton deliverBtn;
@@ -255,12 +267,7 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
     {
         if (e.getSource() == timer)
         {
-            //每隔0.1s轮询，检查新消息和登出
-            //先检查消息
-            if (client.isRead)
-            {
-                //有新消息需要读取
-            }
+            //每隔0.1s轮询，检查登出
 
             //后检查是否关闭
             if (!client.isRun)
@@ -281,6 +288,19 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
             }
             deleverText.setText("");
             System.out.println("已发送消息");
+        }
+        else if(e.getSource() == createGroupBtn)
+        {
+            java.util.List<String> selectedUser=userList.getSelectedValuesList();
+            if (selectedUser.size()<2)
+            {
+                JOptionPane.showMessageDialog(this, "至少选择两个用户");
+                return;
+            }
+
+            String groupName=JOptionPane.showInputDialog(this,"请输入新建的群名");
+            selectedUser.add(username);
+            Client.createGroupRequest(selectedUser,groupName);
         }
     }
 

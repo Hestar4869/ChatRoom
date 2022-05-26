@@ -64,9 +64,12 @@ new FormModel {
 			} ) {
 				name: "eastPanel"
 				"alignmentX": 0.0f
+				add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
+					name: "vSpacer1"
+				} )
 				add( new FormComponent( "javax.swing.JButton" ) {
-					name: "button1"
-					"text": "text"
+					name: "createGroupBtn"
+					"text": "创建群聊"
 				} )
 				add( new FormComponent( "javax.swing.JButton" ) {
 					name: "button2"
@@ -75,6 +78,9 @@ new FormModel {
 				add( new FormComponent( "javax.swing.JButton" ) {
 					name: "button3"
 					"text": "text"
+				} )
+				add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
+					name: "vSpacer2"
 				} )
 			}, new FormLayoutConstraints( class java.lang.String ) {
 				"value": "East"

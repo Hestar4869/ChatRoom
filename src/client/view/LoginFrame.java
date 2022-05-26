@@ -100,7 +100,7 @@ public class LoginFrame extends JFrame implements ActionListener
                 //获取登录账号
                 String username = userText.getText(), passwd = String.valueOf(passwdText.getPassword());
 
-                //todo 用SocketClient.login()函数尝试登录
+                //用Client.login()函数尝试登录
                 if (Client.loginRequest(username,passwd)) {
                     JOptionPane.showMessageDialog(this, "登录成功");
                     Client.chatFrame=new ChatFrame(username);
