@@ -5,6 +5,7 @@ import server.database.dao.MsgDAO;
 import server.database.daoimpl.MsgDAOImpl;
 import server.database.data.Message;
 import server.view.ServerFrame;
+import server.view.ServerFrameTest;
 
 import java.io.BufferedReader;
 import java.io.IOException;

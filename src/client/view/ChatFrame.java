@@ -117,7 +117,7 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
         userTab = new JScrollPane();
         userList = new JList();
         groupTab = new JScrollPane();
-        groupList = new JList<>();
+        groupList = new JList();
         centerPanel = new JPanel();
         scrollPane1 = new JScrollPane();
         msgList = new JList();
@@ -166,24 +166,11 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
 
             //======== groupTab ========
             {
-
-                //---- groupList ----
-                groupList.setModel(new AbstractListModel<String>() {
-                    String[] values = {
-                        "fsdk",
-                        "fsafsfsf",
-                        "fsgsdd"
-                    };
-                    @Override
-                    public int getSize() { return values.length; }
-                    @Override
-                    public String getElementAt(int i) { return values[i]; }
-                });
                 groupTab.setViewportView(groupList);
             }
             westPanel.addTab("\u7fa4\u7ec4", groupTab);
 
-            westPanel.setSelectedIndex(1);
+            westPanel.setSelectedIndex(0);
         }
         contentPane.add(westPanel, BorderLayout.WEST);
 
@@ -251,7 +238,7 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
     private JScrollPane userTab;
     private JList userList;
     private JScrollPane groupTab;
-    private JList<String> groupList;
+    private JList groupList;
     private JPanel centerPanel;
     private JScrollPane scrollPane1;
     private JList msgList;

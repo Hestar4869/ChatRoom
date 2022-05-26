@@ -1,92 +1,134 @@
+/*
+ * Created by JFormDesigner on Wed May 25 20:25:52 CST 2022
+ */
+
 package server.view;
 
 import com.formdev.flatlaf.FlatDarkLaf;
+//import com.jgoodies.forms.factories.*;
 import server.database.data.Message;
 import server.socket.ChatServer;
 import server.socket.UserThread;
 
+import javax.swing.border.*;
+
 import javax.swing.*;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
+import javax.swing.border.SoftBevelBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
 
 /**
- * @className: ServerFrame
- * @description: TODO 类描述
- * @author: HMX
- * @date: 2022-05-19 19:09
+ * @author MuQuanyu
  */
-public class ServerFrame extends JFrame implements ActionListener, ListDataListener
+public class ServerFrame extends JFrame implements ActionListener
 {
-    ChatServer cs=ChatServer.getInstance();
-    //界面宽高
-    private final int WIDTH =400;
-    private final int HEIGHT=400;
-    //界面UI元素
-    JPanel jPanel=new JPanel();
+    ChatServer cs = ChatServer.getInstance();
     public static DefaultListModel<String> lst = new DefaultListModel<>();
-    JList<String> jList=new JList(lst);
 
+    public ServerFrame() {
+        //初始化组件
+        initComponents();
 
-    JPanel btnPanel=new JPanel();
-    JButton logoutBtn=new JButton("Logout");
-    JButton msgBtn=new JButton("send Message");
-    JTextField msgText=new JTextField();
-    //更新轮询器
-    Timer timer=new Timer(1000,this);
+        //事件和数据绑定
+        jList.setModel(lst);
+        msgBtn.addActionListener(this::actionPerformed);
+        msgText.addActionListener(this::actionPerformed);
+        logoutBtn.addActionListener(this::actionPerformed);
 
-    public ServerFrame() throws HeadlessException
-    {
-
+        //服务器启动
         cs.start();
-        //jList.setListData(cs.currentUsers.toArray());
-        //按钮绑定事件
-        logoutBtn.addActionListener(this);
-        msgBtn.addActionListener(this);
-        //add a Panel with many Buttoms which is BoxLayout in Y
-        btnPanel.setLayout(new BoxLayout(btnPanel,BoxLayout.Y_AXIS));
-        btnPanel.add(Box.createVerticalGlue());
-        btnPanel.add(logoutBtn);
-        btnPanel.add(new JLabel(" "));
-        btnPanel.add(msgBtn);
-        btnPanel.add(Box.createVerticalGlue());
-        btnPanel.add(msgText);
-
-        //Dimension封装了电脑屏幕的宽度和高度
-        //获取屏幕宽度和高度，使窗口位于屏幕正中间
-        Dimension width = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setLocation((int) (width.getWidth() - WIDTH) / 2, (int) (width.getHeight() - HEIGHT) / 2);
-
-        this.setLayout(new BorderLayout());
-        this.add(new JScrollPane(jList),BorderLayout.WEST);
-        this.add(btnPanel,BorderLayout.EAST);
-        this.setVisible(true);
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setSize(WIDTH,HEIGHT);
-
-        timer.start();
-
     }
 
+    private void initComponents() {
+        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        scrollPane1 = new JScrollPane();
+        jList = new JList();
+        buttonPanel = new JPanel();
+        vSpacer2 = new JPanel(null);
+        logoutBtn = new JButton();
+        label1 = new JLabel();
+        msgBtn = new JButton();
+        vSpacer6 = new JPanel(null);
+        panel1 = new JPanel();
+        msgText = new JTextField();
+
+        //======== this ========
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new Dimension(300, 400));
+        setVisible(true);
+        setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new BorderLayout());
+
+        //======== scrollPane1 ========
+        {
+            scrollPane1.setViewportView(jList);
+        }
+        contentPane.add(scrollPane1, BorderLayout.CENTER);
+
+        //======== buttonPanel ========
+        {
+            buttonPanel.setBorder(new SoftBevelBorder(SoftBevelBorder.LOWERED));
+            buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+            buttonPanel.add(vSpacer2);
+
+            //---- logoutBtn ----
+            logoutBtn.setText("logout");
+            buttonPanel.add(logoutBtn);
+
+            //---- label1 ----
+            label1.setText(" ");
+            buttonPanel.add(label1);
+
+            //---- msgBtn ----
+            msgBtn.setText("send Message");
+            msgBtn.setAlignmentX(0.15F);
+            buttonPanel.add(msgBtn);
+            buttonPanel.add(vSpacer6);
+        }
+        contentPane.add(buttonPanel, BorderLayout.EAST);
+
+        //======== panel1 ========
+        {
+            panel1.setLayout(new FlowLayout());
+
+            //---- msgText ----
+            msgText.setPreferredSize(new Dimension(200, 30));
+            panel1.add(msgText);
+        }
+        contentPane.add(panel1, BorderLayout.SOUTH);
+        pack();
+        setLocationRelativeTo(getOwner());
+        // JFormDesigner - End of component initialization  //GEN-END:initComponents
+    }
+
+    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+    private JScrollPane scrollPane1;
+    private JList jList;
+    private JPanel buttonPanel;
+    private JPanel vSpacer2;
+    private JButton logoutBtn;
+    private JLabel label1;
+    private JButton msgBtn;
+    private JPanel vSpacer6;
+    private JPanel panel1;
+    private JTextField msgText;
+    // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     @Override
     public void actionPerformed(ActionEvent e)
     {
 
-        if(e.getSource()==timer) {
-//            jList.setListData((Vector<? extends String>) cs.currentUsers);
-        }
-        else if(e.getSource()==logoutBtn){
-            java.util.List<String> selectedUser= jList.getSelectedValuesList();
+        if (e.getSource() == logoutBtn)
+        {
+            java.util.List<String> selectedUser = jList.getSelectedValuesList();
             System.out.println("logoutBtn被点击");
 
             //todo send logout messsge to those users who are selected in the JList
             for (String username : selectedUser)
             {
-                System.out.println("被选中的用户有"+username);
+                System.out.println("被选中的用户有" + username);
                 UserThread ut = cs.userThreadMap.get(username);
                 lst.removeElement(username);
                 cs.currentUsers.remove(username);
@@ -94,13 +136,15 @@ public class ServerFrame extends JFrame implements ActionListener, ListDataListe
                 ut.logout();
             }
         }
-        else if(e.getSource()==msgBtn || e.getSource()==msgText){
+        else if (e.getSource() == msgBtn || e.getSource() == msgText)
+        {
             //todo send System message to those users who are selected in the JList
-            java.util.List<String> selectedUser= jList.getSelectedValuesList();
+            java.util.List<String> selectedUser = jList.getSelectedValuesList();
 
-            for (String username:selectedUser){
-                Message msg=new Message("系统消息",username,msgText.getText());
-                UserThread ut=cs.userThreadMap.get(username);
+            for (String username : selectedUser)
+            {
+                Message msg = new Message("系统消息", username, msgText.getText());
+                UserThread ut = cs.userThreadMap.get(username);
                 ut.sendMessage(msg.toString());
             }
             msgText.setText("");
@@ -109,29 +153,14 @@ public class ServerFrame extends JFrame implements ActionListener, ListDataListe
     public static void main(String[] args)
     {
         //Flat Darcula
-        try {
-            UIManager.setLookAndFeel( new FlatDarkLaf() );
-        } catch( Exception ex ) {
-            System.err.println( "Failed to initialize LaF" );
+        try
+        {
+            UIManager.setLookAndFeel(new FlatDarkLaf());
+        }
+        catch (Exception ex)
+        {
+            System.err.println("Failed to initialize LaF");
         }
         new ServerFrame();
-    }
-
-    @Override
-    public void intervalAdded(ListDataEvent e)
-    {
-
-    }
-
-    @Override
-    public void intervalRemoved(ListDataEvent e)
-    {
-
-    }
-
-    @Override
-    public void contentsChanged(ListDataEvent e)
-    {
-
     }
 }

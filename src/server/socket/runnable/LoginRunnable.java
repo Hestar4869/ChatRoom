@@ -2,10 +2,10 @@ package server.socket.runnable;
 
 import server.database.dao.UserDAO;
 import server.database.daoimpl.UserDAOImpl;
-import server.database.data.User;
 import server.socket.ChatServer;
 import server.socket.UserThread;
 import server.view.ServerFrame;
+import server.view.ServerFrameTest;
 
 import java.io.*;
 import java.net.ServerSocket;
