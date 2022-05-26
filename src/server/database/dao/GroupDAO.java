@@ -14,6 +14,8 @@ public interface GroupDAO
 {
     //根据群名查找该群内所有用户
     public List<String> findUsersByGroup(String groupName) throws Exception;
+    //根据用户名，查找该用户所加入的群组
+    public List<String> findGroupsbyUser(String username) throws Exception;
     //插入新群组
     public void insertGroup(List<String> users,String groupName) throws Exception;
 

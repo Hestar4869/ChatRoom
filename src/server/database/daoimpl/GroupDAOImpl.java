@@ -31,6 +31,18 @@ public class GroupDAOImpl extends BaseDAO implements GroupDAO
     }
 
     @Override
+    public List<String> findGroupsbyUser(String username) throws Exception
+    {
+        List<String> groups=new Vector<>();
+        String sql=String.format("select gname from group_relationship where uname='%s'",username);
+        ResultSet rs=statement.executeQuery(sql);
+        while (rs.next()){
+            groups.add(rs.getString("gname"));
+        }
+        return groups;
+    }
+
+    @Override
     public void insertGroup(List<String> users, String groupName) throws Exception
     {
         System.out.println("开始插入数据");

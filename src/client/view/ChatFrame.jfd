@@ -23,13 +23,12 @@ new FormModel {
 			} )
 			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
 				name: "westPanel"
-				"selectedIndex": 0
 				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 					name: "userTab"
 					"preferredSize": new java.awt.Dimension( 100, 164 )
 					add( new FormComponent( "javax.swing.JList" ) {
 						name: "userList"
-						addEvent( new FormEvent( "javax.swing.event.ListSelectionListener", "valueChanged", "userListValueChanged", true ) )
+						addEvent( new FormEvent( "javax.swing.event.ListSelectionListener", "valueChanged", "ListValueChanged", true ) )
 					} )
 				}, new FormLayoutConstraints( null ) {
 					"title": "用户"
@@ -38,6 +37,7 @@ new FormModel {
 					name: "groupTab"
 					add( new FormComponent( "javax.swing.JList" ) {
 						name: "groupList"
+						addEvent( new FormEvent( "javax.swing.event.ListSelectionListener", "valueChanged", "ListValueChanged", true ) )
 					} )
 				}, new FormLayoutConstraints( null ) {
 					"title": "群组"

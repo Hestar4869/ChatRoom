@@ -57,12 +57,11 @@ public class UserThread extends Thread implements MyConstant
         }
     }
 
-    public void sendMessage(String msgLine)
+    public void sendMessage(String msgLine,String msgType)
     {
-
         ps.println(TYPR_MESSAGE);
         //send Message object
-        ps.println(MSGTYPE_USER);
+        ps.println(msgType);
         ps.println(msgLine);
         System.out.println("服务器将消息" + msgLine + "转发给" + username);
     }
@@ -145,20 +144,37 @@ public class UserThread extends Thread implements MyConstant
 
     private void messageResponse() throws Exception
     {
+        UserThread ut;
         String msgType = br.readLine(), msgLine = br.readLine();
         Message msg = new Message(msgLine);
+        System.out.println(msgLine);
+        //将聊天记录存入数据库
+        MsgDAO msgDAO = new MsgDAOImpl();
+        msgDAO.insert(new Message(msgLine));
         switch (msgType)
         {
             case MSGTYPE_USER:
-                UserThread ut = cs.userThreadMap.get(msg.getDstName());
-                ut.sendMessage(msgLine);
-
-                //将聊天记录存入数据库
-                MsgDAO msgDAO = new MsgDAOImpl();
-                msgDAO.insert(new Message(msgLine));
+                //将消息转发给另一个用户
+                ut = cs.userThreadMap.get(msg.getDstName());
+                ut.sendMessage(msgLine,msgType);
 
                 break;
             case MSGTYPE_GROUP:
+                //获取群组名称
+                String groupName=msg.getDstName();
+                GroupDAO groupDAO=new GroupDAOImpl();
+                List<String> users=groupDAO.findUsersByGroup(groupName);
+
+                //将消息传送给该群组中的其他用户
+                for (String user : users)
+                {
+                    System.out.println("在群聊"+groupName+"中的用户有"+user);
+                    if(!cs.currentUsers.contains(user) || user.equals(username))
+                        continue;
+                    ut=cs.userThreadMap.get(user);
+                    ut.sendMessage(msgLine,msgType);
+                }
+
                 break;
 
 

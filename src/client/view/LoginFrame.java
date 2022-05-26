@@ -129,7 +129,7 @@ public class LoginFrame extends JFrame implements ActionListener
         }
     }
 
-    public static void main(String[] args)
+    public static void main(String[] args) throws Exception
     {
         //Flat Darcula
         try {
@@ -138,21 +138,9 @@ public class LoginFrame extends JFrame implements ActionListener
             System.err.println( "Failed to initialize LaF" );
         }
         LoginFrame loginFrame = new LoginFrame();
-//        new Thread(new Runnable()
-//        {
-//            @Override
-//            public void run()
-//            {
-//                new LoginFrame();
-//            }
-//        }).start();
-//        new Thread(new Runnable()
-//        {
-//            @Override
-//            public void run()
-//            {
-//                new LoginFrame();
-//            }
-//        }).start();
+//        String user="b";
+//        Client.loginRequest(user,user);
+//        Client.chatFrame=new ChatFrame(user);
+//        Client.chatFrame.initHistory();
     }
 }

@@ -6,6 +6,7 @@ package server.view;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 //import com.jgoodies.forms.factories.*;
+import constant.MyConstant;
 import server.database.data.Message;
 import server.socket.ChatServer;
 import server.socket.UserThread;
@@ -145,7 +146,7 @@ public class ServerFrame extends JFrame implements ActionListener
             {
                 Message msg = new Message("系统消息", username, msgText.getText());
                 UserThread ut = cs.userThreadMap.get(username);
-                ut.sendMessage(msg.toString());
+                ut.sendMessage(msg.toString(), MyConstant.MSGTYPE_USER);
             }
             msgText.setText("");
         }

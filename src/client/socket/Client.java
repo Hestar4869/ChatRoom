@@ -46,6 +46,7 @@ public class Client implements Runnable, MyConstant
     //将传入的消息类，发送给服务器，通过服务器发送给其他用户
     //type:"user" 或 "group"
     public static boolean sendMessage(Message msg,String msgType){
+
         ps.println(TYPR_MESSAGE);
         ps.println(msgType);
         ps.println(msg.toString());
@@ -114,6 +115,7 @@ public class Client implements Runnable, MyConstant
 
         //传送客户端用户名
         ps.println(username);
+
         //读取在线用户数
         int count= Integer.parseInt(br.readLine());
         for(int i=1;i<=count;i++){
@@ -123,7 +125,7 @@ public class Client implements Runnable, MyConstant
                 continue;
             currentUsers.add(user);
             chatFrame.userListModel.addElement(user);
-            DefaultListModel dlm=new DefaultListModel();
+            DefaultListModel<Message> dlm=new DefaultListModel<>();
             chatFrame.msgListModelMap.put(user, dlm);
 
             //读取消息数
@@ -136,6 +138,19 @@ public class Client implements Runnable, MyConstant
             }
         }
 
+        //读取该客户端用户所加入的群组数
+        int groupCount= Integer.parseInt(br.readLine());
+        for (int i = 0; i < groupCount; i++)
+        {
+            String groupName= br.readLine();
+            chatFrame.groupListModel.addElement(groupName);
+            DefaultListModel<Message> dlm=new DefaultListModel<>();
+            chatFrame.msgListModelMap.put(groupName,dlm);
+            System.out.println(username+"所加入的群组有"+groupName);
+
+            //读取对应的消息
+
+        }
         for (String user : currentUsers)
         {
             System.out.println("当前在线的用户有："+user);
@@ -156,6 +171,8 @@ public class Client implements Runnable, MyConstant
             ps.println(user);
         ps.println(groupName);
 
+        DefaultListModel<Message> dlm=new DefaultListModel<>();
+        chatFrame.msgListModelMap.put(groupName,dlm);
         return true;
     }
     //开启线程，等待登出信息或者其他用户的聊天消息
@@ -173,19 +190,22 @@ public class Client implements Runnable, MyConstant
                 }
                 else if(flag.equals(TYPR_MESSAGE)){
                     isRead=true;
+                    //读取消息类型以及具体消息
                     String msgType= br.readLine();
+                    String msgLine= br.readLine();
+
+                    Message msg=new Message(msgLine);
+                    DefaultListModel<Message> msgListModel;
                     switch (msgType){
                         case MSGTYPE_GROUP:
                             //添加到群聊消息
-
+                            msgListModel= chatFrame.msgListModelMap.get(msg.getDstName());
+                            msgListModel.addElement(msg);
                             break;
                         case MSGTYPE_USER:
                             //添加到用户消息
-                            String msgLine= br.readLine();
-                            Message msg=new Message(msgLine);
-                            DefaultListModel<Message> msgListModel= chatFrame.msgListModelMap.get(msg.getSrcName());
+                            msgListModel= chatFrame.msgListModelMap.get(msg.getSrcName());
                             msgListModel.addElement(msg);
-
                             break;
                     }
                 }
@@ -212,6 +232,9 @@ public class Client implements Runnable, MyConstant
                 else if(flag.equals(TYPE_GROUP_CREATE)){
                     String groupName= br.readLine();
                     chatFrame.groupListModel.addElement(groupName);
+                    DefaultListModel dls=new DefaultListModel();
+                    chatFrame.msgListModelMap.put(groupName,dls);
+                    //读取历史消息
                     JOptionPane.showMessageDialog(chatFrame,"您已被拉入新群聊"+groupName);
                 }
             }

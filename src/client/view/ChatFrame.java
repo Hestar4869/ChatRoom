@@ -4,16 +4,17 @@
 
 package client.view;
 
-import java.awt.event.*;
-import javax.swing.event.*;
 import client.socket.Client;
 import constant.MyConstant;
 import server.database.data.Message;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,11 +30,12 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
     //消息List列表框的相关UI
     public MessageCellRender msgCellRender;
     public DefaultListModel<Message> msgListModel;
-    public Map<String,DefaultListModel<Message>> msgListModelMap=new HashMap<>();
+    public Map<String, DefaultListModel<Message>> msgListModelMap = new HashMap<>();
 
     //用户列表框相关UI
     public DefaultListModel<String> userListModel;
     public DefaultListModel<String> groupListModel;
+
     public ChatFrame(String username) throws Exception
     {
         this.username = username;
@@ -52,13 +54,13 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
         msgList.setModel(msgListModel);
 
         //初始化用户列表框UI
-        userListModel=new DefaultListModel<>();
+        userListModel = new DefaultListModel<>();
         userList.setModel(userListModel);
         userListModel.addElement("系统消息");
-        msgListModelMap.put("系统消息",new DefaultListModel<>());
+        msgListModelMap.put("系统消息", new DefaultListModel<>());
 
         //初始化群组列表框UI
-        groupListModel=new DefaultListModel<>();
+        groupListModel = new DefaultListModel<>();
         groupList.setModel(groupListModel);
 
         //初始化历史记录
@@ -85,22 +87,38 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
     }
 
     //userList列表框绑定事件
-    private void userListValueChanged(ListSelectionEvent e) {
+    private void ListValueChanged(ListSelectionEvent e)
+    {
         //当鼠标按下时
-        if(e.getValueIsAdjusting()){
-            java.util.List<String> users=userList.getSelectedValuesList();
+        if (e.getSource() == userList && e.getValueIsAdjusting())
+        {
+            java.util.List<String> users = userList.getSelectedValuesList();
             //数量大于1,直接跳过
-            if (users.size()>1)
+            if (users.size() > 1)
+            {
+                return;
+            }
+
+            //切换ListModel
+            String user = users.get(0);
+            System.out.println("用户被点击了,开始切换");
+            msgList.setModel(msgListModelMap.get(user));
+        }
+        else if (e.getSource() == groupList && e.getValueIsAdjusting()){
+            java.util.List<String> groups=groupList.getSelectedValuesList();
+            //数量大于1,直接跳过
+            if (groups.size() > 1)
                 return;
 
             //切换ListModel
-            String user=users.get(0);
-            System.out.println("被点击了,开始切换");
-            msgList.setModel(msgListModelMap.get(user));
+            String group = groups.get(0);
+            System.out.println("群组被点击了,开始切换");
+            msgList.setModel(msgListModelMap.get(group));
         }
     }
 
-    private void thisWindowClosing(WindowEvent e) {
+    private void thisWindowClosing(WindowEvent e)
+    {
         // 窗口关闭
         System.out.println("窗口关闭了");
         //向远端服务器传送用户下线的消息
@@ -108,11 +126,23 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
         {
             Client.logoutRequest(username);
         }
-        catch (Exception exception) {
+        catch (Exception exception)
+        {
             exception.printStackTrace();
         }
     }
 
+    public String getMessageType()
+    {
+        if (westPanel.getTabCount() == 0)
+        {
+            return MSGTYPE_USER;
+        }
+        else
+        {
+            return MSGTYPE_GROUP;
+        }
+    }
 
     private void initComponents()
     {
@@ -167,18 +197,19 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
                 userTab.setPreferredSize(new Dimension(100, 164));
 
                 //---- userList ----
-                userList.addListSelectionListener(e -> userListValueChanged(e));
+                userList.addListSelectionListener(e -> ListValueChanged(e));
                 userTab.setViewportView(userList);
             }
             westPanel.addTab("\u7528\u6237", userTab);
 
             //======== groupTab ========
             {
+
+                //---- groupList ----
+                groupList.addListSelectionListener(e -> ListValueChanged(e));
                 groupTab.setViewportView(groupList);
             }
             westPanel.addTab("\u7fa4\u7ec4", groupTab);
-
-            westPanel.setSelectedIndex(0);
         }
         contentPane.add(westPanel, BorderLayout.WEST);
 
@@ -276,31 +307,38 @@ public class ChatFrame extends JFrame implements ActionListener, MyConstant
                 System.exit(0);
             }
         }
-        else if (e.getSource() == deliverBtn || e.getSource()==deleverText)
+        else if (e.getSource() == deliverBtn || e.getSource() == deleverText)
         {
-            java.util.List<String> selectedUser = userList.getSelectedValuesList();
+            String msgType=getMessageType();
+            //该处的user可能是用户也可能是群组
+            java.util.List<String> selectedUser;
+            if(msgType.equals(MSGTYPE_USER))
+                selectedUser=userList.getSelectedValuesList();
+            else
+                selectedUser=groupList.getSelectedValuesList();
+
             for (String user : selectedUser)
             {
-                Message msg=new Message(username, user, deleverText.getText());
-                Client.sendMessage(msg, MyConstant.MSGTYPE_USER);
+                Message msg = new Message(username, user, deleverText.getText());
+                Client.sendMessage(msg, getMessageType());
+
                 DefaultListModel<Message> lm=msgListModelMap.get(user);
                 lm.addElement(msg);
             }
             deleverText.setText("");
             System.out.println("已发送消息");
         }
-        else if(e.getSource() == createGroupBtn)
+        else if (e.getSource() == createGroupBtn)
         {
-            java.util.List<String> selectedUser=userList.getSelectedValuesList();
-            if (selectedUser.size()<2)
+            java.util.List<String> selectedUser = userList.getSelectedValuesList();
+            if (selectedUser.size() < 2)
             {
                 JOptionPane.showMessageDialog(this, "至少选择两个用户");
                 return;
             }
-
-            String groupName=JOptionPane.showInputDialog(this,"请输入新建的群名");
+            String groupName = JOptionPane.showInputDialog(this, "请输入新建的群名");
             selectedUser.add(username);
-            Client.createGroupRequest(selectedUser,groupName);
+            Client.createGroupRequest(selectedUser, groupName);
         }
     }
 

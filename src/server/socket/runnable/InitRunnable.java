@@ -1,6 +1,8 @@
 package server.socket.runnable;
 
+import server.database.dao.GroupDAO;
 import server.database.dao.MsgDAO;
+import server.database.daoimpl.GroupDAOImpl;
 import server.database.daoimpl.MsgDAOImpl;
 import server.database.data.Message;
 import server.socket.ChatServer;
@@ -65,6 +67,13 @@ public class InitRunnable implements Runnable
 
                 }
                 //传送该用户所属群组
+                GroupDAO groupDAO=new GroupDAOImpl();
+                List<String> groups=groupDAO.findGroupsbyUser(clientUser);
+                //先传送群组数
+                ps.println(groups.size());
+                for (String group : groups)
+                    ps.println(group);
+
 
                 //传送历史聊天记录
 

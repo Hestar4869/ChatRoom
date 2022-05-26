@@ -97,7 +97,7 @@ public class ServerFrameTest extends JFrame implements ActionListener, ListDataL
             {
                 Message msg = new Message("系统消息", username, msgText.getText());
                 UserThread ut = cs.userThreadMap.get(username);
-                ut.sendMessage(msg.toString());
+//                ut.sendMessage(msg.toString());
             }
             msgText.setText("");
         }
